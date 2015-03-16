@@ -16,7 +16,6 @@
 package io.airlift.log;
 
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,8 +25,6 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
 
 /**
  * Initializes the logging subsystem.
@@ -84,7 +81,7 @@ public class Logging
         context.addListener(levelPropagator);*/
 
 
-        redirectJULToSLF4j();
+        //redirectJULToSLF4j();
         //rewireStdStreams();
     }
 
@@ -162,7 +159,7 @@ public class Logging
         root.addAppender(fileAppender);*/
     }
 
-    private void redirectJULToSLF4j()
+   /* private void redirectJULToSLF4j()
     {
         java.util.logging.Logger javaRootLogger = LogManager.getLogManager().getLogger("");
         for (Handler handler : javaRootLogger.getHandlers()) {
@@ -170,7 +167,7 @@ public class Logging
         }
         javaRootLogger.addHandler(new SLF4JBridgeHandler());
     }
-
+*/
     public void setLevels(File file)
             throws IOException
     {
