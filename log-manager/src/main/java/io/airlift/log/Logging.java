@@ -15,10 +15,6 @@
  */
 package io.airlift.log;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.jul.LevelChangePropagator;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.OutputStreamAppender;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -43,10 +39,9 @@ import java.util.logging.LogManager;
 public class Logging
 {
     private static final String PATTERN = "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}\\t%5p\\t%t\\t%c\\t%m%n";
-    private final LoggerContext context;
+
     private final  org.slf4j.Logger root;
     private final static Logger log = Logger.get(Logging.class);
-    private OutputStreamAppender<ILoggingEvent> consoleAppender;
 
     private static final String TEMP_FILE_EXTENSION = ".tmp";
     private static final String LOG_FILE_EXTENSION = ".log";
@@ -80,13 +75,13 @@ public class Logging
         // initialize root logger
         root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
-        // assume SLF4J is bound to logback in the current environment
+        /*// assume SLF4J is bound to logback in the current environment
         context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.reset();
 
         LevelChangePropagator levelPropagator = new LevelChangePropagator();
         levelPropagator.setContext(context);
-        context.addListener(levelPropagator);
+        context.addListener(levelPropagator);*/
 
 
         redirectJULToSLF4j();
