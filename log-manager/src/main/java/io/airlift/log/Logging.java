@@ -16,14 +16,9 @@
 package io.airlift.log;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
-import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
-import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-import ch.qos.logback.core.status.Status;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -31,7 +26,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.util.Map;
@@ -50,7 +44,7 @@ public class Logging
 {
     private static final String PATTERN = "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}\\t%5p\\t%t\\t%c\\t%m%n";
     private final LoggerContext context;
-    private final ch.qos.logback.classic.Logger root;
+    private final  org.slf4j.Logger root;
     private final static Logger log = Logger.get(Logging.class);
     private OutputStreamAppender<ILoggingEvent> consoleAppender;
 
@@ -84,7 +78,7 @@ public class Logging
     private Logging()
     {
         // initialize root logger
-        root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
         // assume SLF4J is bound to logback in the current environment
         context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -94,20 +88,19 @@ public class Logging
         levelPropagator.setContext(context);
         context.addListener(levelPropagator);
 
-        root.setLevel(ch.qos.logback.classic.Level.INFO);
 
         redirectJULToSLF4j();
-        rewireStdStreams();
+        //rewireStdStreams();
     }
 
-    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+   /* @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     private void rewireStdStreams()
     {
         redirectSlf4jTo(new NonCloseableOutputStream(System.err));
         log.info("Logging to stderr");
 
         redirectStdStreams();
-    }
+    }*/
 
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     private void redirectStdStreams()
@@ -116,7 +109,7 @@ public class Logging
         System.setErr(new PrintStream(new LoggingOutputStream(Logger.get("stderr")), true));
     }
 
-    private void redirectSlf4jTo(OutputStream stream)
+  /*  private void redirectSlf4jTo(OutputStream stream)
     {
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern(PATTERN);
@@ -130,19 +123,19 @@ public class Logging
         consoleAppender.start();
         root.addAppender(consoleAppender);
     }
-
+*/
     public void disableConsole()
     {
-        log.info("Disabling stderr output");
+        /*log.info("Disabling stderr output");
         root.detachAppender(consoleAppender);
-        consoleAppender.stop();
+        consoleAppender.stop();*/
     }
 
     public void logToFile(String logPath, int maxHistory, long maxSizeInBytes)
     {
         log.info("Logging to %s", logPath);
 
-        recoverTempFiles(logPath);
+        /*recoverTempFiles(logPath);
 
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern(PATTERN);
@@ -171,7 +164,7 @@ public class Logging
         fileAppender.setRollingPolicy(rollingPolicy);
         fileAppender.setContext(context);
         fileAppender.start();
-        root.addAppender(fileAppender);
+        root.addAppender(fileAppender);*/
     }
 
     private void redirectJULToSLF4j()
@@ -257,7 +250,7 @@ public class Logging
         // off console logging, as file logging may be broken due to invalid paths or missing config.
         // If any errors have occurred, log them (to the console, which is guaranteed to be properly set up)
         // and bail out with an exception
-        boolean error = false;
+        /*boolean error = false;
         for (Status status : root.getLoggerContext().getStatusManager().getCopyOfStatusList()) {
             if (status.getLevel() == Status.ERROR) {
                 log.error(status.getMessage());
@@ -267,7 +260,7 @@ public class Logging
 
         if (error) {
             throw new RuntimeException("Error initializing logger, aborting");
-        }
+        }*/
 
         if (!config.isConsoleEnabled()) {
             disableConsole();
